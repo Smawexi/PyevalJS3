@@ -1,8 +1,10 @@
 import subprocess
 import logging
 import json
-import exception
 import abc
+
+__package__ = "pyevaljs3"
+from . import exception
 JSException = exception.JSException
 _logger = logging.getLogger("JSEval")
 

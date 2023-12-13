@@ -3,11 +3,13 @@ import os
 import subprocess
 import tempfile
 import logging
-import runtime
-import exception
+
+__package__ = "pyevaljs3"
+from . import runtime
+from . import exception
 JSException = exception.JSException
 _logger = logging.getLogger("JSEval")
-__all__ = ['JSEval']
+__all__ = ['JSEval', 'Context']
 
 
 class JSEval(runtime.AbstractRuntime):
