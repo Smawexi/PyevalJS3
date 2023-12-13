@@ -50,7 +50,7 @@ js_eval.eval(js_code)
 - def compile_(source: str = None, mode: str = None) -> Context:    
 &ensp;&ensp; 编译js源代码   
 &ensp;&ensp; :param source: 源代码字符串或要读取的文件路径    
-&ensp;&ensp; :param suffix: 执行模式, 默认以.js的行为去执行   
+&ensp;&ensp; :param mode: 执行模式, 默认以.js的行为去执行   
 &ensp;&ensp; :return: Context    
 
 
