@@ -47,7 +47,11 @@ class AbstractRuntime:
             for out in outs.strip().split("\n")[:-2]:
                 print(out)
             if outs.strip().split("\n")[-2] == "JSEval_state: ok":
-                return json.loads(outs.strip().split()[-1])
+                try:
+                    return json.loads(outs.strip().split()[-1])
+                except json.JSONDecodeError:
+                    _logger.error("not supported this behaviour")
+                    return None
             else:
                 print(outs.strip().split()[-2])
                 print(outs.strip().split()[-1])

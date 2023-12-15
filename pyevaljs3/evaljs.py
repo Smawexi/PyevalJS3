@@ -94,7 +94,11 @@ class Context:
             return
         try:
             if outs.strip().split("\n")[-2] == "JSEval_state: ok":
-                return json.loads(outs.strip().split()[-1])
+                try:
+                    return json.loads(outs.strip().split()[-1])
+                except json.JSONDecodeError:
+                    _logger.error("not supported this behaviour")
+                    return None
         except IndexError:
             return
 

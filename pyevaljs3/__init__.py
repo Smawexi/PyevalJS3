@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __package__ = 'pyevaljs3'
 from . import evaljs as _evaljs
 
@@ -31,10 +33,6 @@ class Context:
         """
 
 
-for obj_name in _evaljs.__all__:
-    globals()[obj_name] = _evaljs.__dict__[obj_name]
-
-
 def compile_(source: str = None, mode: str = None) -> Context:
     """
     编译js源代码
@@ -55,3 +53,7 @@ def eval_(code: str = None):
     :return:
     """
     return JSEval().eval(code)
+
+
+for obj_name in _evaljs.__all__:
+    globals()[obj_name] = _evaljs.__dict__[obj_name]

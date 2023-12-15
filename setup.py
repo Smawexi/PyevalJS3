@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 from pyevaljs3.__version__ import version
 
 NAME = 'pyevaljs3'
-URL = "https://github.com/Smawexi/pyevaljs"
+URL = "https://github.com/Smawexi/pyevaljs3"
 EMAIL = '1281722462@qq.com'
 AUTHOR = 'Samwe'
 REQUIRES_PYTHON = '>=3.6.0'
-DESCRIPTION = '一个依赖node.js来执行js代码的库'
+DESCRIPTION = '一个依赖node.js来执行js代码的python库'
 LONG_DESCRIPTION = open('README.md', encoding="utf-8").read()
 
 setup(
