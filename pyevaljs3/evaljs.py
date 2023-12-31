@@ -66,6 +66,9 @@ class Context:
         if len(args) == 1:
             args = args[0]
 
+        if isinstance(args, str):
+            args = [args]
+
         return self._call(func, list(args))
 
     def _call(self, func, args):
