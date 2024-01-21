@@ -3,7 +3,7 @@
 ----------------------
 
 ### 环境
-**注意** 需要安装好node.js!!!
+**注意** 需要安装好node.js, 并添加好环境变量!!!
 
 -----------------------------------
 
@@ -19,9 +19,14 @@ pip install pyevaljs3
 ```python
 import pyevaljs3
 
-js_code = "console.log(100); return 'ok';"
-js_eval = pyevaljs3.JSEval()
-js_eval.eval(js_code)
+js_code = "function f(args) {console.log(args); return 'ok';} return f('args')"
+result = pyevaljs3.eval_(js_code)
+print(result) # 'ok'
+
+js_code = "function f(arg1, arg2) {console.log(arg1, arg2); return arg1 + arg2;}"
+ctx = pyevaljs3.compile_(js_code)
+result = ctx.call('f', 'a', 'b')
+print(result) # 'ab'
 ```
 
 ----------------------------------------
@@ -33,8 +38,8 @@ js_eval.eval(js_code)
 &ensp;&ensp; :param source: 源代码字符串或要读取的文件路径  
 &ensp;&ensp; :param suffix: js脚本文件名后缀(指定以什么模式执行), 默认是".js", 可选的值还有".cjs", ".mjs"等  
 &ensp;&ensp; :return: Context  
-- def eval(self, code: str = None):  
-&ensp;&ensp; 执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)  
+- def eval(self, code: str = None, ignore_output=False):  
+&ensp;&ensp; 执行javascript代码, 返回其结果
 
 ------------------------------
 
@@ -54,9 +59,10 @@ js_eval.eval(js_code)
 &ensp;&ensp; :return: Context    
 
 
-- def eval_(code: str = None):  
+- def eval_(code: str = None, ignore_output=False):   
 &ensp;&ensp; 执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)  
 &ensp;&ensp; :param code: js代码  
+&ensp;&ensp; :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)  
 
 -----------------------------------
 

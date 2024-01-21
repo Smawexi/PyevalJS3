@@ -14,10 +14,11 @@ class JSEval:
         :return: Context
         """
 
-    def eval(self, code: str = None):
+    def eval(self, code: str = None, ignore_output=False):
         """
-        执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)
+        执行javascript代码, 返回其结果
         :param code:
+        :param ignore_output:
         :return:
         """
 
@@ -46,13 +47,14 @@ def compile_(source: str = None, mode: str = None) -> Context:
     return JSEval().compile(source, mode)
 
 
-def eval_(code: str = None):
+def eval_(code: str = None, ignore_output=False):
     """
-    执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)
+    执行javascript代码, 返回其结果
     :param code: js代码
+    :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)
     :return:
     """
-    return JSEval().eval(code)
+    return JSEval().eval(code, ignore_output)
 
 
 for obj_name in _evaljs.__all__:

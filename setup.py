@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from pyevaljs3.__version__ import version
 
 NAME = 'pyevaljs3'
-URL = "https://github.com/Smawexi/pyevaljs3"
+URL = "https://github.com/Smawexi/PyevalJS3"
 EMAIL = '1281722462@qq.com'
 AUTHOR = 'Samwe'
 REQUIRES_PYTHON = '>=3.6.0'

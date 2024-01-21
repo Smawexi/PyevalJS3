@@ -1,10 +1,8 @@
-import json
+__package__ = "pyevaljs3"
+
 import os
-import subprocess
-import tempfile
 import logging
 
-__package__ = "pyevaljs3"
 from . import runtime
 from . import exception
 JSException = exception.JSException
@@ -39,18 +37,20 @@ class JSEval(runtime.AbstractRuntime):
 
         return Context(self._source, suffix)
 
-    def eval(self, code: str = None):
+    def eval(self, code: str = None, ignore_output=False):
         """
-        执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)
+        执行javascript代码, 返回其结果
         :param code:
+        :param ignore_output:
         :return:
         """
         if code is None:
             return
-        return self._eval(code)
+
+        return self._eval(code, ignore_output)
 
 
-class Context:
+class Context(runtime.AbstractContext):
 
     def __init__(self, source: str = None, suffix: str = None):
         self._source = source
@@ -70,43 +70,3 @@ class Context:
             args = [args]
 
         return self._call(func, list(args))
-
-    def _call(self, func, args):
-        _source = f'{self._source};var __result = {func}.apply(this, {args});if (__result !== undefined) {{console.log("JSEval_state: ok");console.log(JSON.stringify(__result));}}'
-        _path = self._make_temp_file(_source)
-        _cmd = ['node', _path]
-        popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                 universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
-        try:
-            outs, errs = popen.communicate()
-        except Exception as e:
-            _logger.error(e)
-            popen.kill()
-            outs, errs = popen.communicate()
-        finally:
-            os.remove(_path)
-
-        if popen.returncode != 0:
-            raise JSException(outs)
-
-        return self._extract_result(outs)
-
-    @staticmethod
-    def _extract_result(outs: str):
-        if not outs.strip().split("\n")[0]:
-            return
-        try:
-            if outs.strip().split("\n")[-2] == "JSEval_state: ok":
-                try:
-                    return json.loads(outs.strip().split()[-1])
-                except json.JSONDecodeError:
-                    _logger.error("not supported this behaviour")
-                    return None
-        except IndexError:
-            return
-
-    def _make_temp_file(self, source: str = None):
-        fd, path = tempfile.mkstemp(suffix=self._suffix, dir=".")
-        with open(fd, 'w', encoding='utf-8') as fp:
-            fp.write(source)
-        return path
