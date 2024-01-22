@@ -60,7 +60,7 @@ print(result) # 'ab'
 
 
 - def eval_(code: str = None, ignore_output=False):   
-&ensp;&ensp; 执行javascript代码, 返回其结果(对于长字符串的情况，请使用compile)  
+&ensp;&ensp; 执行javascript代码, 返回其结果  
 &ensp;&ensp; :param code: js代码  
 &ensp;&ensp; :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)  
 
