@@ -1,3 +1,7 @@
+"""
+feature: Added filtering warnings from version 0.1
+"""
+
 __package__ = "pyevaljs3"
 
 import os
@@ -12,6 +16,12 @@ JSException = exception.JSException
 _logger = logging.getLogger("JSEval")
 
 
+def get_node_env():
+    node = os.environ.get('NODE_PATH') if os.environ.get('NODE_PATH') else os.environ.get('NODE')
+    if not node:
+        return "node"
+
+
 class AbstractRuntime:
 
     @abc.abstractmethod
@@ -23,7 +33,8 @@ class AbstractRuntime:
         raise NotImplementedError()
 
     def _eval(self, code: str = None, ignore_output=False):
-        _cmd = ["node"]
+        node = get_node_env()
+        _cmd = [node, "--no-warnings"]
         _input = f'var __result = (() => {{{code}}})();if (__result !== undefined) {{console.log("JSEval_state: ok");console.log(JSON.stringify(__result));}};'
         popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
@@ -69,9 +80,10 @@ class AbstractContext:
         raise NotImplementedError()
 
     def _call(self, func, args):
+        node = get_node_env()
         _source = f'{self._source};var __result = {func}.apply(this, {args});if (__result !== undefined) {{console.log("JSEval_state: ok");console.log(JSON.stringify(__result));}}'
         _path = self._make_temp_file(_source)
-        _cmd = ['node', _path]
+        _cmd = [node, "--no-warnings", _path]
         popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
         try:

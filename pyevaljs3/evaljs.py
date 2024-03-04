@@ -42,7 +42,7 @@ class JSEval(runtime.AbstractRuntime):
         执行javascript代码, 返回其结果
         :param code:
         :param ignore_output:
-        :return:
+        :return: Any
         """
         if code is None:
             return
@@ -66,7 +66,7 @@ class Context(runtime.AbstractContext):
         if len(args) == 1:
             args = args[0]
 
-        if isinstance(args, str):
+        if isinstance(args, (str, int)):
             args = [args]
 
         return self._call(func, list(args))

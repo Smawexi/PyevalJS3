@@ -19,13 +19,17 @@ pip install pyevaljs3
 ```python
 import pyevaljs3
 
-js_code = "function f(args) {console.log(args); return 'ok';} return f('args')"
+js_code = "function f(args) {console.log(args); return 'ok';}; return f('args')"
 result = pyevaljs3.eval_(js_code)
 print(result) # 'ok'
 
 js_code = "function f(arg1, arg2) {console.log(arg1, arg2); return arg1 + arg2;}"
 ctx = pyevaljs3.compile_(js_code)
 result = ctx.call('f', 'a', 'b')
+print(result) # 'ab'
+
+#另一钟传参方式
+result = ctx.call('f', ['a', 'b'])
 print(result) # 'ab'
 ```
 
@@ -38,6 +42,8 @@ print(result) # 'ab'
 &ensp;&ensp; :param source: 源代码字符串或要读取的文件路径  
 &ensp;&ensp; :param suffix: js脚本文件名后缀(指定以什么模式执行), 默认是".js", 可选的值还有".cjs", ".mjs"等  
 &ensp;&ensp; :return: Context  
+
+
 - def eval(self, code: str = None, ignore_output=False):  
 &ensp;&ensp; 执行javascript代码, 返回其结果
 
@@ -66,4 +72,15 @@ print(result) # 'ab'
 
 -----------------------------------
 
-**欢迎各位使用此库, 有问题请提交issue**
+#### 使用自定义版本的node
+
+- 通过设置坏境变量来使用自定义版本的node, 只需设置NODE_PATH、NODE坏境变量即可  
+```python
+import os
+# 优先级最高
+os.environ['NODE_PATH'] = '/path/to/node.exe'
+# 或者
+# 优先级其次
+os.environ['NODE'] = '/path/to/node.exe'
+```
+

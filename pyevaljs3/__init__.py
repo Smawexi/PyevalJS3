@@ -1,3 +1,25 @@
+"""
+简单示例
+>>> import pyevaljs3
+>>>
+>>> js_code = "function f() {return 'ok';}; return f()"
+>>> result = pyevaljs3.eval_(js_code)
+>>> assert result == 'ok'
+>>> # -------------------------------------------------------------------------------
+>>> js_code = "function f(arg1, arg2) {console.log(arg1, arg2); return arg1 + arg2;}"
+>>> ctx = pyevaljs3.compile_(js_code)
+>>> result = ctx.call('f', 'a', 'b')
+>>> assert result == 'ab'
+>>> # 另外一种传参方式
+>>> result = ctx.call('f', ['a', 'b'])
+>>> assert result == 'ab'
+# 还可以通过设置坏境变量来使用自定义版本的node, 只需设置NODE_PATH、NODE坏境变量即可, 如没设置则默认使用全局的node坏境(需要添加系统路径)
+import os
+# 优先级最高
+os.environ['NODE_PATH'] = '/path/to/node.exe'
+# 或者
+os.environ['NODE'] = '/path/to/node.exe'
+"""
 from __future__ import annotations
 
 __package__ = 'pyevaljs3'
@@ -19,7 +41,7 @@ class JSEval:
         执行javascript代码, 返回其结果
         :param code:
         :param ignore_output:
-        :return:
+        :return: Any
         """
 
 
@@ -30,7 +52,7 @@ class Context:
         调用指定的函数, 返回其结果
         :param func: 函数名
         :param args: 函数的参数列表
-        :return:
+        :return: Any
         """
 
 
@@ -52,7 +74,7 @@ def eval_(code: str = None, ignore_output=False):
     执行javascript代码, 返回其结果
     :param code: js代码
     :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)
-    :return:
+    :return: Any
     """
     return JSEval().eval(code, ignore_output)
 
