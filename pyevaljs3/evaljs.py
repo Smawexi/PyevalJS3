@@ -63,10 +63,5 @@ class Context(runtime.AbstractContext):
         :param args: 函数的参数列表
         :return:
         """
-        if len(args) == 1:
-            args = args[0]
-
-        if isinstance(args, (str, int)):
-            args = [args]
-
-        return self._call(func, list(args))
+        _args = [arg for arg in args]
+        return self._call(func, _args)
