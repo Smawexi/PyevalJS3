@@ -12,8 +12,12 @@ import abc
 import tempfile
 
 from . import exception
+from .setting import IS_WINDOWS, NO_WARNINGS
+from .runner import Runner
 JSException = exception.JSException
 _logger = logging.getLogger("JSEval")
+if not IS_WINDOWS:
+    subprocess.DETACHED_PROCESS = 0
 
 
 def get_node_env():
@@ -35,8 +39,8 @@ class AbstractRuntime:
 
     def _eval(self, code: str = None, ignore_output=False):
         node = get_node_env()
-        _cmd = [node, "--no-warnings"]
-        _input = f'var __result = (() => {{{code}}})();if (__result !== undefined) {{console.log("JSEval_state: ok");console.log(JSON.stringify(__result));}};'
+        _cmd = [node, NO_WARNINGS]
+        _input = Runner.program('eval', code)
         popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
         try:
@@ -82,9 +86,9 @@ class AbstractContext:
 
     def _call(self, func, args):
         node = get_node_env()
-        _source = f'{self._source};var __result = {func}.apply(this, {args});if (__result !== undefined) {{console.log("JSEval_state: ok");console.log(JSON.stringify(__result));}}'
+        _source = Runner.program('call', self._source, func, args)
         _path = self._make_temp_file(_source)
-        _cmd = [node, "--no-warnings", _path]
+        _cmd = [node, NO_WARNINGS, _path]
         popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
         try:
