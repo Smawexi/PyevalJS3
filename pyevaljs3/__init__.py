@@ -11,7 +11,7 @@
 >>> result = ctx.call('f', 'a', 'b')
 >>> assert result == 'ab'
 >>> # 另外一种传参方式
->>> result = ctx.call('f', ['a', 'b'])
+>>> result = ctx.call('f', arg_list=['a', 'b'])
 >>> assert result == 'ab'
 # 还可以通过设置坏境变量来使用自定义版本的node, 只需设置NODE_PATH、NODE坏境变量即可, 如没设置则默认使用全局的node坏境(需要添加系统路径)
 import os
@@ -23,6 +23,7 @@ os.environ['NODE'] = '/path/to/node.exe'
 from __future__ import annotations
 
 __package__ = 'pyevaljs3'
+from typing import List
 from . import evaljs as _evaljs
 
 
@@ -47,11 +48,12 @@ class JSEval:
 
 class Context:
 
-    def call(self, func, *args):
+    def call(self, func, *args, arg_list: List = None):
         """
-        调用指定的函数, 返回其结果
+        调用指定的函数, 返回其结果(若指定了arg_list, 优先使用它作为函数参数)
         :param func: 函数名
         :param args: 函数的参数列表
+        :param arg_list: 函数的参数列表
         :return: Any
         """
 

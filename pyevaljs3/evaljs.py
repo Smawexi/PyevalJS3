@@ -2,6 +2,7 @@ __package__ = "pyevaljs3"
 
 import os
 import logging
+from typing import List
 
 from . import runtime
 from . import exception
@@ -56,12 +57,16 @@ class Context(runtime.AbstractContext):
         self._source = source
         self._suffix = suffix
 
-    def call(self, func, *args):
+    def call(self, func, *args, arg_list: List = None):
         """
         调用指定的函数, 返回其结果
         :param func: 函数名
         :param args: 函数的参数列表
+        :param arg_list: 函数的参数列表
         :return:
         """
-        _args = [arg for arg in args]
+        if arg_list is not None:
+            _args = arg_list
+        else:
+            _args = [arg for arg in args]
         return self._call(func, _args)
