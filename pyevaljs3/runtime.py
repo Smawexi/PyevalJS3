@@ -14,17 +14,12 @@ import tempfile
 from . import exception
 from .setting import IS_WINDOWS, NO_WARNINGS
 from .runner import Runner
+from .utils import get_node_env
 JSException = exception.JSException
+RunTimeNotFoundError = exception.RunTimeNotFoundError
 _logger = logging.getLogger("JSEval")
 if not IS_WINDOWS:
     subprocess.DETACHED_PROCESS = 0
-
-
-def get_node_env():
-    node = os.environ.get('NODE_PATH') if os.environ.get('NODE_PATH') else os.environ.get('NODE')
-    if not node:
-        return "node"
-    return node
 
 
 class AbstractRuntime:
@@ -41,8 +36,12 @@ class AbstractRuntime:
         node = get_node_env()
         _cmd = [node, NO_WARNINGS]
         _input = Runner.program('eval', code)
-        popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                 universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+        try:
+            popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                     universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+        except Exception:
+            raise RunTimeNotFoundError("Missing node environment")
+
         try:
             outs, errs = popen.communicate(input=_input)
         except Exception as e:
@@ -89,8 +88,13 @@ class AbstractContext:
         _source = Runner.program('call', self._source, func, args)
         _path = self._make_temp_file(_source)
         _cmd = [node, NO_WARNINGS, _path]
-        popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                 universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+        try:
+            popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                     universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+        except Exception:
+            os.remove(_path)
+            raise RunTimeNotFoundError("Missing node environment")
+
         try:
             outs, errs = popen.communicate()
         except Exception as e:
