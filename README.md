@@ -29,7 +29,7 @@ result = ctx.call('f', 'a', 'b')
 print(result) # 'ab'
 
 #另一钟传参方式
-result = ctx.call('f', ['a', 'b'])
+result = ctx.call('f', arg_list=['a', 'b'])
 print(result) # 'ab'
 ```
 
@@ -50,10 +50,11 @@ print(result) # 'ab'
 ------------------------------
 
 **pyevaljs3.Context**  
-- def call(self, func, *args):  
-&ensp;&ensp; 调用指定的函数, 返回其结果  
+- def call(self, func, *args, arg_list: List = None):  
+&ensp;&ensp; 调用指定的函数, 返回其结果(若指定了arg_list, 优先使用它作为函数参数)  
 &ensp;&ensp; :param func: 函数名  
 &ensp;&ensp; :param args: 函数的参数列表  
+&ensp;&ensp; :param arg_list: 函数的参数列表  
 
 --------------------------------------
 
