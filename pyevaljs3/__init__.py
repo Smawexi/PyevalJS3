@@ -13,6 +13,7 @@
 >>> # 另外一种传参方式
 >>> result = ctx.call('f', arg_list=['a', 'b'])
 >>> assert result == 'ab'
+
 # 还可以通过设置坏境变量来使用自定义版本的node, 只需设置NODE_PATH、NODE坏境变量即可, 如没设置则默认使用全局的node坏境(需要添加系统路径)
 import os
 # 优先级最高
@@ -25,6 +26,7 @@ from __future__ import annotations
 __package__ = 'pyevaljs3'
 from typing import List
 from . import evaljs as _evaljs
+from .__version__ import version
 
 
 class JSEval:
