@@ -18,8 +18,9 @@ from .utils import get_node_env
 JSException = exception.JSException
 RunTimeNotFoundError = exception.RunTimeNotFoundError
 _logger = logging.getLogger("JSEval")
+_DETACHED_PROCESS = subprocess.DETACHED_PROCESS
 if not IS_WINDOWS:
-    subprocess.DETACHED_PROCESS = 0
+    _DETACHED_PROCESS = 0
 
 
 class AbstractRuntime:
@@ -38,7 +39,7 @@ class AbstractRuntime:
         _input = Runner.program('eval', code)
         try:
             popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+                                     universal_newlines=True, creationflags=_DETACHED_PROCESS)
         except Exception:
             raise RunTimeNotFoundError("Missing node environment")
 
@@ -56,25 +57,26 @@ class AbstractRuntime:
 
     @staticmethod
     def _extract_result(outs: str, ignore_output=False):
-        if not outs.strip().split("\n")[0]:
+        _outs = outs.strip().split("\n")
+        if not _outs[0]:
             return
         try:
-            for out in outs.strip().split("\n")[:-2]:
+            for out in _outs[:-2]:
                 if not ignore_output:
                     print(out)
-            if outs.strip().split("\n")[-2] == "JSEval_state: ok":
+            if _outs[-2] == "JSEval_state: ok":
                 try:
-                    return json.loads(outs.strip().split("\n")[-1])
+                    return json.loads(_outs[-1])
                 except json.JSONDecodeError:
                     _logger.error("not supported this behaviour")
                     return None
             else:
                 if not ignore_output:
-                    print(outs.strip().split()[-2])
-                    print(outs.strip().split()[-1])
+                    print(_outs[-2])
+                    print(_outs[-1])
         except IndexError:
             if not ignore_output:
-                print(outs.strip().split("\n")[-1])
+                print(_outs[-1])
 
 
 class AbstractContext:
@@ -90,7 +92,7 @@ class AbstractContext:
         _cmd = [node, NO_WARNINGS, _path]
         try:
             popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=subprocess.DETACHED_PROCESS)
+                                     universal_newlines=True, creationflags=_DETACHED_PROCESS)
         except Exception:
             os.remove(_path)
             raise RunTimeNotFoundError("Missing node environment")
@@ -111,12 +113,13 @@ class AbstractContext:
 
     @staticmethod
     def _extract_result(outs: str):
-        if not outs.strip().split("\n")[0]:
+        _outs = outs.strip().split("\n")
+        if not _outs[0]:
             return
         try:
-            if outs.strip().split("\n")[-2] == "JSEval_state: ok":
+            if _outs[-2] == "JSEval_state: ok":
                 try:
-                    return json.loads(outs.strip().split("\n")[-1])
+                    return json.loads(_outs[-1])
                 except json.JSONDecodeError:
                     _logger.error("not supported this behaviour")
                     return None

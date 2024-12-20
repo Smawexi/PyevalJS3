@@ -69,4 +69,5 @@ class Context(runtime.AbstractContext):
             _args = arg_list
         else:
             _args = [arg for arg in args]
+
         return self._call(func, _args)
