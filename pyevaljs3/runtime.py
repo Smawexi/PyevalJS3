@@ -18,9 +18,10 @@ from .utils import get_node_env
 JSException = exception.JSException
 RunTimeNotFoundError = exception.RunTimeNotFoundError
 _logger = logging.getLogger("JSEval")
-_DETACHED_PROCESS = subprocess.DETACHED_PROCESS
 if not IS_WINDOWS:
     _DETACHED_PROCESS = 0
+else:
+    _DETACHED_PROCESS = subprocess.DETACHED_PROCESS
 
 
 class AbstractRuntime:
