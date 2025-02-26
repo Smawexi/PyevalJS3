@@ -31,6 +31,17 @@ print(result) # 'ab'
 #另一钟传参方式
 result = ctx.call('f', arg_list=['a', 'b'])
 print(result) # 'ab'
+
+# 调用js异步函数
+js_code = "async function f(arg1, arg2) {console.log(arg1, arg2); return arg1 + arg2;}"
+ctx = pyevaljs3.compile_(js_code)
+async def main():
+    result = await ctx.async_call('f', "a", "b", async_js_func=True)
+    return result
+
+import asyncio
+result = asyncio.run(main())
+print(result) # 'ab'
 ```
 
 ----------------------------------------
@@ -47,6 +58,10 @@ print(result) # 'ab'
 - def eval(self, code: str = None, ignore_output=False):  
 &ensp;&ensp; 执行javascript代码, 返回其结果
 
+
+- async def async_eval(self, code: str = None, ignore_output=False):  
+&ensp;&ensp; 执行javascript代码, 返回其结果(异步版本的eval)
+
 ------------------------------
 
 **pyevaljs3.Context**  
@@ -54,7 +69,12 @@ print(result) # 'ab'
 &ensp;&ensp; 调用指定的函数, 返回其结果(若指定了arg_list, 优先使用它作为函数参数)  
 &ensp;&ensp; :param func: 函数名  
 &ensp;&ensp; :param args: 函数的参数列表  
-&ensp;&ensp; :param arg_list: 函数的参数列表  
+&ensp;&ensp; :param arg_list: 函数的参数列表
+
+
+- async def async_call(self, func, *args, arg_list: List = None, async_js_func: bool = False):  
+&ensp;&ensp; 调用指定的函数, 返回其结果(若指定了arg_list, 优先使用它作为函数参数), 参数解释同call  
+&ensp;&ensp; :param async_js_func: 调用的js函数是否是异步js函数  
 
 --------------------------------------
 
@@ -70,6 +90,10 @@ print(result) # 'ab'
 &ensp;&ensp; 执行javascript代码, 返回其结果  
 &ensp;&ensp; :param code: js代码  
 &ensp;&ensp; :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)  
+
+
+- async def async_eval(code: str = None, ignore_output=False):  
+&ensp;&ensp; 执行javascript代码, 返回其结果, 参数解释同eval_, 异步版本的eval_  
 
 -----------------------------------
 
