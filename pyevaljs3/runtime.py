@@ -45,7 +45,7 @@ class AbstractRuntime:
         _input = Runner.program('eval', code)
         try:
             popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=_DETACHED_PROCESS)
+                                     universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8')
         except Exception:
             raise RunTimeNotFoundError("Missing node environment")
 
@@ -126,7 +126,7 @@ class AbstractContext:
         _cmd = [node, NO_WARNINGS, _path]
         try:
             popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=_DETACHED_PROCESS)
+                                     universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8')
         except Exception:
             os.remove(_path)
             raise RunTimeNotFoundError("Missing node environment")

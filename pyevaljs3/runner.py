@@ -16,6 +16,7 @@ class Runner:
     @classmethod
     def program(cls, action: str, code: str, func=None, args: List = None):
         if action == 'call' or action == "async_call":
+            args = str(args).replace('True', 'true').replace('False', 'false')
             return NODE_PROGRAM[action].format(_source=code, func=func, args=args)
 
         return NODE_PROGRAM[action].format(code=code)
