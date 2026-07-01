@@ -48,18 +48,19 @@ print(result) # 'ab'
 
 ### API参考
 **pyevaljs3.JSEval**  
-- def compile(self, source: str = None, suffix: str = None):  
+- def compile(self, source: str = None, suffix: str = None, cwd: str = None):  
 &ensp;&ensp; 编译javascript源代码  
 &ensp;&ensp; :param source: 源代码字符串或要读取的文件路径  
 &ensp;&ensp; :param suffix: js脚本文件名后缀(指定以什么模式执行), 默认是".js", 可选的值还有".cjs", ".mjs"等  
+&ensp;&ensp; :param cwd: 工作目录路径  
 &ensp;&ensp; :return: Context  
 
 
-- def eval(self, code: str = None, ignore_output=False):  
+- def eval(self, code: str = None, ignore_output=False, cwd: str = None):  
 &ensp;&ensp; 执行javascript代码, 返回其结果
 
 
-- async def async_eval(self, code: str = None, ignore_output=False):  
+- async def async_eval(self, code: str = None, ignore_output=False, cwd: str = None):  
 &ensp;&ensp; 执行javascript代码, 返回其结果(异步版本的eval)
 
 ------------------------------
@@ -79,20 +80,22 @@ print(result) # 'ab'
 --------------------------------------
 
 **pyevaljs3的模块级函数**  
-- def compile_(source: str = None, mode: str = None) -> Context:    
+- def compile_(source: str = None, mode: str = None, cwd: str = None) -> Context:    
 &ensp;&ensp; 编译js源代码   
 &ensp;&ensp; :param source: 源代码字符串或要读取的文件路径    
 &ensp;&ensp; :param mode: 执行模式, 默认以.js的行为去执行   
+&ensp;&ensp; :param cwd: 工作目录路径   
 &ensp;&ensp; :return: Context    
 
 
-- def eval_(code: str = None, ignore_output=False):   
+- def eval_(code: str = None, ignore_output=False, cwd: str = None):   
 &ensp;&ensp; 执行javascript代码, 返回其结果  
 &ensp;&ensp; :param code: js代码  
 &ensp;&ensp; :param ignore_output: 是否忽略执行过程中的输出, 若为True则仅返回其结果, 默认不忽略(False)  
+&ensp;&ensp; :param cwd: 工作目录路径   
 
 
-- async def async_eval(code: str = None, ignore_output=False):  
+- async def async_eval(code: str = None, ignore_output=False, cwd: str = None):  
 &ensp;&ensp; 执行javascript代码, 返回其结果, 参数解释同eval_, 异步版本的eval_  
 
 -----------------------------------

@@ -28,24 +28,26 @@ else:
 class AbstractRuntime:
 
     @abc.abstractmethod
-    def eval(self, code: str = None):
+    def eval(self, code: str = None, cwd: str = None):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    async def async_eval(self, code: str = None):
+    async def async_eval(self, code: str = None, cwd: str = None):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def compile(self, source: str = None, suffix: str = None):
+    def compile(self, source: str = None, suffix: str = None, cwd: str = None):
         raise NotImplementedError()
 
-    def _eval(self, code: str = None, ignore_output=False):
+    def _eval(self, code: str = None, ignore_output: bool = False, cwd: str = None):
         node = get_node_env()
         _cmd = [node, NO_WARNINGS]
         _input = Runner.program('eval', code)
         try:
-            popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8')
+            popen = subprocess.Popen(
+                _cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8', cwd=cwd
+            )
         except Exception:
             raise RunTimeNotFoundError("Missing node environment")
 
@@ -61,13 +63,13 @@ class AbstractRuntime:
 
         return self._extract_result(outs, ignore_output)
 
-    async def _async_eval(self, code: str = None, ignore_output=False):
+    async def _async_eval(self, code: str = None, ignore_output=False, cwd: str = None):
         node = get_node_env()
         _input = Runner.program('eval', code).encode("utf-8")
         try:
             process = await asyncio.create_subprocess_exec(
                 node, NO_WARNINGS, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                creationflags=_DETACHED_PROCESS
+                creationflags=_DETACHED_PROCESS, cwd=cwd
             )
         except Exception:
             raise RunTimeNotFoundError("Missing node environment")
@@ -125,8 +127,10 @@ class AbstractContext:
         _path = self._make_temp_file(_source)
         _cmd = [node, NO_WARNINGS, _path]
         try:
-            popen = subprocess.Popen(_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8')
+            popen = subprocess.Popen(
+                _cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8', cwd=self._cwd
+            )
         except Exception:
             os.remove(_path)
             raise RunTimeNotFoundError("Missing node environment")
@@ -156,7 +160,7 @@ class AbstractContext:
         try:
             process = await asyncio.create_subprocess_exec(
                 node, NO_WARNINGS, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                creationflags=_DETACHED_PROCESS
+                creationflags=_DETACHED_PROCESS, cwd=self._cwd
             )
         except Exception:
             raise RunTimeNotFoundError("Missing node environment")
@@ -190,7 +194,12 @@ class AbstractContext:
             return
 
     def _make_temp_file(self, source: str = None):
-        fd, path = tempfile.mkstemp(suffix=self._suffix, dir=".")
+        if self._cwd is None:
+            _dir = "."
+        else:
+            _dir = self._cwd
+
+        fd, path = tempfile.mkstemp(suffix=self._suffix, dir=_dir)
         with open(fd, 'w', encoding='utf-8') as fp:
             fp.write(source)
         return path
