@@ -48,8 +48,8 @@ class AbstractRuntime:
                 _cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8', cwd=cwd
             )
-        except Exception:
-            raise RunTimeNotFoundError("Missing node environment")
+        except Exception as e:
+            raise RunTimeNotFoundError(f"Missing node environment, current use Node path: {node}, error: {repr(e)}")
 
         try:
             outs, errs = popen.communicate(input=_input)
@@ -71,8 +71,8 @@ class AbstractRuntime:
                 node, NO_WARNINGS, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 creationflags=_DETACHED_PROCESS, cwd=cwd
             )
-        except Exception:
-            raise RunTimeNotFoundError("Missing node environment")
+        except Exception as e:
+            raise RunTimeNotFoundError(f"Missing node environment, current use Node path: {node}, error: {repr(e)}")
 
         try:
             outs, errs = await process.communicate(input=_input)
@@ -131,9 +131,9 @@ class AbstractContext:
                 _cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 universal_newlines=True, creationflags=_DETACHED_PROCESS, encoding='utf-8', cwd=self._cwd
             )
-        except Exception:
+        except Exception as e:
             os.remove(_path)
-            raise RunTimeNotFoundError("Missing node environment")
+            raise RunTimeNotFoundError(f"Missing node environment, current use Node path: {node}, error: {repr(e)}")
 
         try:
             outs, errs = popen.communicate()
@@ -162,8 +162,8 @@ class AbstractContext:
                 node, NO_WARNINGS, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 creationflags=_DETACHED_PROCESS, cwd=self._cwd
             )
-        except Exception:
-            raise RunTimeNotFoundError("Missing node environment")
+        except Exception as e:
+            raise RunTimeNotFoundError(f"Missing node environment, current use Node path: {node}, error: {repr(e)}")
 
         try:
             outs, errs = await process.communicate(input=_input)
